@@ -1,0 +1,212 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "vpcCIDR": {
+            "Description": "enter the vpc cidr block",
+            "Type": "String",
+            "Default": "10.10.0.0/16"
+        },
+        "websubnetCIDR": {
+            "Description": "enter the websubnet cidr block",
+            "Type": "String",
+            "Default": "10.10.0.0/24"
+        },
+        "databasesubnetCIDR": {
+            "Description": "enter the databasesubnet cidr block",
+            "Type": "String",
+            "Default": "10.10.1.0/24"
+        },
+        "AZforwebsubnet": {
+            "Description": "enter the az of websubnet",
+            "Type": "String",
+            "Default": "ap-south-1a"
+        },
+        "AZfordatabasesubnet": {
+            "Description": "enter the az of databasesubnet",
+            "Type": "String",
+            "Default": "ap-south-1b"
+        }
+    },
+    "Resources": {
+        "myvpc": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref": "vpcCIDR"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "mynetwok"
+                    }
+                ]
+            }
+        },
+        "websubnet": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "AZforwebsubnet"
+                },
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "CidrBlock": {
+                    "Ref": "websubnetCIDR"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "web"
+                    }
+                ]
+            }
+        },
+        "databasesubnet": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "AZfordatabasesubnet"
+                },
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "CidrBlock": {
+                    "Ref": "databasesubnetCIDR"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "data"
+                    }
+                ]
+            }
+        },
+        "myigw": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "myinternetgateway"
+                    }
+                ]
+            }
+        },
+        "AttachGateway": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "InternetGatewayId": {
+                    "Ref": "myigw"
+                }
+            }
+        },
+        "myrt": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "myroutetable"
+                    }
+                ]
+            }
+        },
+        "myroute": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "myrt"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "myigw"
+                }
+            }
+        },
+        "routeTableAssocName": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "websubnet"
+                },
+                "RouteTableId": {
+                    "Ref": "myrt"
+                }
+            }
+        },
+        "routeTableAssocName2": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "databasesubnet"
+                },
+                "RouteTableId": {
+                    "Ref": "myrt"
+                }
+            }
+        },
+        "mysg": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "my sg",
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+        "webserver": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": "mumbai",
+                "ImageId": "ami-04ea996e7a3e7ad6b",
+                "InstanceType": "t2.micro",
+                "SubnetId": {
+                    "Ref": "websubnet"
+                },
+                "SecurityGroupIds": [
+                    {
+                        "Ref": "mysg"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Webserver"
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "vpcid": {
+            "Value": {
+                "Ref": "myvpc"
+            }
+        },
+        "websubnetid": {
+            "Value": {
+                "Ref": "websubnet"
+            }
+        },
+        "databasesubnetid": {
+            "Value": {
+                "Ref": "databasesubnet"
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+

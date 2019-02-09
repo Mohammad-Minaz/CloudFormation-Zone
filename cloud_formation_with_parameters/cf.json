@@ -1,0 +1,83 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description": "Script with Parameters",
+    "Parameters": {
+       
+        "cidrblockforvpc": {
+            "Description": "Please Enter the CIDR block",
+            "Type": "String"
+            
+        },
+        "Availabiltyzonesforsubnet1": {
+            "Description": "Please Enter the Avalability zone",
+            "Type": "AWS::EC2::AvailabilityZone::Name"
+        },
+        "Availabiltyzonesforsubnet2": {
+            "Description": "Please Enter the Avalability zone",
+            "Type": "AWS::EC2::AvailabilityZone::Name"
+        },
+        "cidrblockforsubnet1": {
+            "Description": "Please Enter the CIDR block",
+            "Type": "String"
+        },
+        "cidrblockforsubnet2": {
+            "Description": "Please Enter the CIDR block",
+            "Type": "String"
+        }
+        
+    },
+    "Resources": {
+        "myvpc": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref": "cidrblockforvpc"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "MyNetwork"
+                    }
+                ]
+            }
+        },
+        "Subnet1": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "Availabiltyzonesforsubnet1"
+                },
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "CidrBlock": {
+                    "Ref": "cidrblockforsubnet1"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Subnet1"
+                    }
+                ]
+            }
+        },
+        "Subnet2": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "Availabiltyzonesforsubnet2"
+                },
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "CidrBlock": {
+                    "Ref": "cidrblockforsubnet2"
+                },
+                
+                "Tags":[
+                { "Key": "Name", "Value":  "Subnet2" }
+                ]                
+            }
+        }
+    }
+}
