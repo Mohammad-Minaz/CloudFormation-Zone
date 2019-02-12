@@ -1,41 +1,32 @@
 {
-    "AWSTemplateFormatVersion" : "2010-09-09",
+    "AWSTemplateFormatVersion": "2010-09-09",
     "Resources": {
-        
         "myvpc": {
             "Description": "this is the my network",
             "Type": "AWS::EC2::VPC",
-            "Properties" : {
-                "CidrBlock" : "10.10.0.0/16"
-
-             }
+            "Properties": {
+                "CidrBlock": "10.10.0.0/16"
+            }
         },
-
-        
         "subnet1": {
             "Description": "this is subnet 1",
             "Type": "AWS::EC2::Subnet",
-            "Properties" : {
-                "CidrBlock" : "10.10.0.0/24",
-                "VpcId" :{ "Ref": "myvpc" }
+            "Properties": {
+                "CidrBlock": "10.10.0.0/24",
+                "VpcId": {
+                    "Ref": "myvpc"
                 }
-              },
-
-        
+            }
+        },
         "subnet2": {
             "Description": "this is subnet 2",
             "Type": "AWS::EC2::Subnet",
-            "Properties" : {
-                "CidrBlock" : "10.10.1.0/24",
-                "VpcId" :{ "Ref": "myvpc" }
+            "Properties": {
+                "CidrBlock": "10.10.1.0/24",
+                "VpcId": {
+                    "Ref": "myvpc"
                 }
+            }
         }
-        
-
-
-              
-        
-        
-        
     }
 }
